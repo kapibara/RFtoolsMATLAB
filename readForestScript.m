@@ -2,7 +2,9 @@
 % readFeature(fid), readStats(fid)s
 
 options.readFeature = @(fid) readFeature_DepthFeature(fid);
-options.readStats = @(fid) readStats_ClassStats(fid);
+options.readStats = @(fid) readStats_VotesStats(fid);
 
-f = fopen('/home/kuznetso/Projects/CPP/DepthRF/testout');
+f = fopen('C:/Data/Development/CPP/DepthRF/hforest');
 forest = readForest(f,options);
+
+fclose(f);
