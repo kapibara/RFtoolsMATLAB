@@ -12,16 +12,16 @@ function [votes,img] = applyTree(tree,leafIds,imgIds,xVals,yVals)
     fs = [0 0];
     
     for i=1:length(li)
-%         [Ims,centers] = aggregate_VotesStats(tree.nodes(li(i)).stats);
-%         for j=1:length(Ims)
-%             Ims{j} = Ims{j}/sum(sum(Ims{j}));
-%         end        
+        [Ims,centers] = aggregate_VotesStats(tree.nodes(li(i)).stats);
+        for j=1:length(Ims)
+            Ims{j} = Ims{j}/sum(sum(Ims{j}));
+        end        
 %         for j=1:length(Ims)
 %             fs = min(size(Ims{j}),fsdef);
 %             fil = fspecial('average',fs);
 %             Ims{j} = imfilter(Ims{j},fil);
 %         end       
-        [Ims,centers,modes] = findModes_VotesStats(tree.nodes(li(i)).stats);
+%        [Ims,centers,modes] = findModes_VotesStats(tree.nodes(li(i)).stats);
         
         tree.nodes(li(i)).stats.map = Ims;
         tree.nodes(li(i)).stats.centers = centers;

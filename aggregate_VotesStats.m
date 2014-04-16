@@ -1,4 +1,4 @@
-function [Ims,centers] = aggregate_VotesStats(stats)
+function [Ims,centers] = aggregate_VotesStatsTStats(stats)
 
     if(isfield(stats,'map'))
         Ims = stats.map;

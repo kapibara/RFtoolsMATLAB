@@ -23,18 +23,10 @@ function [H,oub,Hcenters] = houghImage(tree, indices, xVals, yVals, zeroCenters,
     fsdef = [5 5];
     fs = [0 0];
     %aggregate all stats
-    for i=1:length(uind)
-        [Ims,centers] = aggregate_VotesStats(tree.nodes(uind(i)).stats);
-%         for j=1:length(Ims)
-%             fs = min(size(Ims{j}),fsdef);
-%             fil = fspecial('average',fs);
-%             Ims{j} = imfilter(Ims{j},fil);
-%         end
-%normalize Ims
-        tree.nodes(uind(i)).stats.Ims = Ims;
-        tree.nodes(uind(i)).stats.centers = centers;
+    if(~isfield(tree.nodes(uind(1)),'map'))
+        warning('statistics is not aggregated');
+        return
     end
-    
     
     
     w = 480; h = 640;
