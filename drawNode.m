@@ -15,7 +15,11 @@ function h = drawNode(node,t,options)
     
     if(scale>0)
     
-        h(1) = rectangle('Position',[x-rx*scale/2,y-ry*scale/2,rx*scale,ry*scale],'Curvature',[1,1],'FaceColor','r','Parent',haxes);
+        if(isfield(t.nodes(id).stats,'map'))
+            h(1) = rectangle('Position',[x-rx*scale/2,y-ry*scale/2,rx*scale,ry*scale],'Curvature',[1,1],'FaceColor','r','Parent',haxes);
+        else
+            h(1) = rectangle('Position',[x-rx*scale/2,y-ry*scale/2,rx*scale,ry*scale],'Curvature',[1,1],'FaceColor','g','Parent',haxes);
+        end
         
         
     else

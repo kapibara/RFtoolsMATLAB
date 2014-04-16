@@ -1,7 +1,5 @@
 
-%/home/kuznetso/tmp/DepthHOUGH/20_18_11_08 --- diagonal features
-
-p = '/home/kuznetso/tmp/DepthHOUGH/21_19_46_31/accomulatedFeatures';
+function data = readAccomulatedFeatures(p)
 
 fid = fopen(p);
 
@@ -33,5 +31,7 @@ while(~feof(fid))
 end
 
 fclose(fid);
+
+end
 
 

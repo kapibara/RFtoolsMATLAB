@@ -31,10 +31,18 @@ function onnodeclick(node,t,options)
     id = str2double(get(node,'ID'));
     n = t.nodes(id);
     
+    
+    
     figure(6);
     cla(gca);
     
-    options.visStats(n.stats);
+    if (n.bIsLeaf)
+        options.visStats(n.stats);
+    elseif (n.bIsSplit)
+        
+        options.visFeature(n.feature);
+        title(n.threshold);
+    end
     
 %    figure(7);
 %    cla(gca);
