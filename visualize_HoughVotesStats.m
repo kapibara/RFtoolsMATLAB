@@ -8,7 +8,7 @@ function I = visualize_HoughVotesStats( stats )
     
     I = I/max(max(stats.m));
    
-    gt_shifted = [stats.gt_x + stats.center_x; stats.gt_x stats.center_y];
+    gt_shifted = [stats.gt_x + stats.center_x; stats.gt_y + stats.center_y];
     
     I(gt_shifted(1),gt_shifted(2),1) = 1;
     I(gt_shifted(1),gt_shifted(2),2) = 0;

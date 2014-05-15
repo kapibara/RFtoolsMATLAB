@@ -17,5 +17,5 @@ function I = readBinImg(fname)
     
     fclose(fid);
     
-    I = reshape(I,width,height);
+    I = reshape(I,width,height)';
 end

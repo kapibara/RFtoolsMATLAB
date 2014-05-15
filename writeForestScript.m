@@ -1,13 +1,13 @@
 %% serialize fores
 
-p = './forest45';
+p = '/home/kuznetso/Projects/CPP/DepthRF/test/forest';
 
 fid = fopen(p,'w');
 
 
 options.writeFeature = @(fid,feature) writeFeature_DepthFeature(fid,feature);
-options.writeStats = @(fid,stats) writeStats_VotesStats(fid,stats);
+options.writeStats = @(fid,stats) writeStats_VotesStatsT(fid,stats);
 
-writeForest(fid,forest45, options);
+writeForest(fid,forest, options);
 
 fclose(fid);

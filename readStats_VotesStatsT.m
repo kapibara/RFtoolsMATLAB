@@ -15,4 +15,5 @@ function vse = readStats_VotesStatsElem(fid)
     votes = fread(fid,[s c],'float');
     vse.vc = vc;
     vse.votes = votes;
+    vse.dim = s;
 end

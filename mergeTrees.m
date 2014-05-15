@@ -1,4 +1,4 @@
-function tree = mergeTrees(tree1,tree2)
+function tree = mergeTrees(tree1,tree2,w1,w2)
     nodes1 = tree1.nodes;
     nodes2 = tree2.nodes;
     
@@ -17,11 +17,11 @@ function tree = mergeTrees(tree1,tree2)
         node.feature = struct();
         if (nodes1(i).bIsSplit) && (nodes2(i).bIsSplit)
             %both splits
-            node.feature.ux = (nodes1(i).feature.ux + nodes2(i).feature.ux)/2;
-            node.feature.uy = (nodes1(i).feature.uy + nodes2(i).feature.uy)/2;
-            node.feature.vx = (nodes1(i).feature.vx + nodes2(i).feature.vx)/2;
-            node.feature.vy = (nodes1(i).feature.vy + nodes2(i).feature.vy)/2;
-            node.threshold = (nodes1(i).threshold + nodes2(i).threshold)/2;
+            node.feature.ux = (nodes1(i).feature.ux*w1 + nodes2(i).feature.ux*w2)/(w1+w2);
+            node.feature.uy = (nodes1(i).feature.uy*w1 + nodes2(i).feature.uy*w2)/(w1+w2);
+            node.feature.vx = (nodes1(i).feature.vx*w1 + nodes2(i).feature.vx*w2)/(w1+w2);
+            node.feature.vy = (nodes1(i).feature.vy*w1 + nodes2(i).feature.vy*w2)/(w1+w2);
+            node.threshold = (nodes1(i).threshold*w1 + nodes2(i).threshold*w2)/(w1+w2);
             node.feature.zero = nodes1(i).feature.zero;
         elseif nodes1(i).bIsSplit     
             %one split
@@ -42,7 +42,7 @@ function tree = mergeTrees(tree1,tree2)
         end
         
         node.stats = struct();
-        node.stats.point_count = floor((nodes1(i).stats.point_count + nodes2(i).stats.point_count)/2);
+        node.stats.point_count = floor((nodes1(i).stats.point_count*w1 + nodes2(i).stats.point_count*w2)/(w1+w2));
         if (nodes1(i).stats.vclasses>0)
             node.stats.vclasses = nodes1(i).stats.vclasses;
             node.stats.votes = cell(size(nodes1(i).stats.votes));
@@ -50,8 +50,11 @@ function tree = mergeTrees(tree1,tree2)
             node.stats.vclasses = nodes2(i).stats.vclasses;
             node.stats.votes = cell(size(nodes2(i).stats.votes));        
         end
+        % dont do it -> leafs are aggregated as decorators...
         if(node.bIsLeaf)
             if(nodes1(i).bIsLeaf && nodes2(i).bIsLeaf)
+                
+                %% aggregate leafs (this is VotesStats version)
                 node.stats.map = cell(node.stats.vclasses,1);
                 node.stats.centers = cell(node.stats.vclasses,1);
                 [Ims1,centers1] = aggregate_VotesStats(nodes1(i).stats);
@@ -77,6 +80,8 @@ function tree = mergeTrees(tree1,tree2)
                     node.stats.map{j}(range2x,range2y) = node.stats.map{j}(range2x,range2y) + Ims2{j};
                     node.stats.map{j} = node.stats.map{j}/2;
                 end
+                
+                %% aggregate leafs (this is 'Decorated' version)
             %aggregate votes map :(
             elseif nodes1(i).bIsLeaf
                 node.stats.votes = nodes1(i).stats.votes;

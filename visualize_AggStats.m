@@ -1,10 +1,9 @@
-function visualize_VotesStatsT( stats )
+function [rnum,cnum]=visualize_AggStats( stats )
 
     vslength = length(stats.elems);
     rnum = floor(sqrt(vslength));
     cnum = floor(vslength/rnum)+1;
     dim =size(stats.elems{1}.votes,1);
-    
     
     if (dim < 3)
         if(~isfield(stats,'map'))
@@ -35,15 +34,20 @@ function visualize_VotesStatsT( stats )
     elseif dim ==3
        
         for i=1:vslength
+            v = stats.elems{i}.votes;
+            w = stats.elems{i}.weights;
+            
+            v(:,w<=0) = [];
+            w(w<=0) = [];
 
             subplot(rnum,cnum,i)
-            if (size(stats.elems{i}.votes,2) < 30000)
-                scatter3(stats.elems{i}.votes(1,:),stats.elems{i}.votes(2,:),stats.elems{i}.votes(3,:),10);
+            if (size(v,2) < 30000)
+                scatter3(v(1,:),v(2,:),v(3,:),500*w);
             else
-                sub = ceil(size(stats.elems{i}.votes,2)/30000);
-                scatter3(stats.elems{i}.votes(1,1:sub:end),stats.elems{i}.votes(2,1:sub:end),stats.elems{i}.votes(3,1:sub:end),10);
+                sub = ceil(size(v,2)/30000);
+                scatter3(v(1,1:sub:end),v(2,1:sub:end),v(3,1:sub:end),500*w(1:sub:end));
             end
-            title(['votes: ' num2str(i) ' size: ' num2str(stats.elems{i}.vc)]);
+            title(['votes: ' num2str(i) ' size: ' num2str(size(v,2))]);
         end
         
     end

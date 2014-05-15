@@ -23,15 +23,17 @@ function createTestTrain2DP( outdir, data , ismasked, useCenter, useNT)
         h = fspecial('average', [7 7]);
         If = imfilter(I,h,'replicate');
         I = If.*mask2 + (mask1-mask2).*I;
+        
+        outputfn = [outdir 'img' num2str(data{i}.person) '_' num2str(data{i}.number) '.png'];
 
         if (ismasked)
             mask = double(imread(data{i}.mask)')/255; %carefull mask max: 255
-            imwrite(uint16(I.*mask),[outdir 'img_' num2str(data{i}.number) '.png']);
+            imwrite(uint16(I.*mask),outputfn);
         else
-            imwrite(uint16(I),[outdir 'img_' num2str(data{i}.number) '.png']);
+            imwrite(uint16(I),outputfn);
         end
         
-        fprintf(fid,[outdir 'img_' num2str(data{i}.number) '.png']);
+        fprintf(fid,outputfn);
         if (useCenter)
             fprintf(fid,',%03.2f,%03.2f',data{i}.C2D([2 1]));
         end

@@ -10,6 +10,12 @@ function T = readTree(fid,options)
        if(decisionLevel<=0)
            warning('invalid data')
        end
+       
+       if(isfield(options,'decisionLevel'))
+           if(decisionLevel>options.decisionLevel)
+               decisionLevel = options.decisionLevel;
+           end
+       end
        nodeCount = 2^(decisionLevel+1)-1;
        
        nodes = [];

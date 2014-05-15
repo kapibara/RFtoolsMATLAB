@@ -10,20 +10,25 @@ function [H,oub,Hcenters] = houghImage(tree, indices, xVals, yVals, zeroCenters,
         xVals = -1*ones(length(indices),1);
         yVals = -1*ones(length(indices),1);
     end
+    
+    if(~exist('zeroCenters','var'))
+        zeroCenters =  0;
+    end
 
     indices = indices+1; %since we save c++-style indices
     xVals = xVals(indices>0)+1;
     yVals = yVals(indices>0)+1;
     indices = indices(indices>0);
     
-    vslength = length(tree.nodes(1).stats.votes);
-    
+
     uind = unique(indices);
+    
+    vslength = length(tree.nodes(uind(1)).stats.map);   
     
     fsdef = [5 5];
     fs = [0 0];
     %aggregate all stats
-    if(~isfield(tree.nodes(uind(1)),'map'))
+    if(~isfield(tree.nodes(uind(1)).stats,'map'))
         warning('statistics is not aggregated');
         return
     end
@@ -59,12 +64,12 @@ function [H,oub,Hcenters] = houghImage(tree, indices, xVals, yVals, zeroCenters,
         
       
         for j = 1:length(xVals)
-            if(~isfield(tree.nodes(indices(j)).stats,'Ims'))
-                warning('Ims field does not exist');
+            if(~isfield(tree.nodes(indices(j)).stats,'map'))
+                warning('map field does not exist');
             end
-            if(votesVariance(tree.nodes(indices(j)).stats)<50000000)
+%            if(votesVariance(tree.nodes(indices(j)).stats)<50000000)
                 Imsstart = [1 1];
-                Imsend = size(tree.nodes(indices(j)).stats.Ims{i});
+                Imsend = size(tree.nodes(indices(j)).stats.map{i});
                 if(startpoint(j,1)<1)
                     Imsstart(1) = Imsstart(1) + 1 - startpoint(j,1);
                     startpoint(j,1) = 1;
@@ -81,12 +86,13 @@ function [H,oub,Hcenters] = houghImage(tree, indices, xVals, yVals, zeroCenters,
                     Imsend(2) = Imsend(2) - (endpoint(j,2)-h);
                     endpoint(j,2) = h;
                 end
+                
                 H{i}(startpoint(j,1):endpoint(j,1),startpoint(j,2):endpoint(j,2)) = ...
                 H{i}(startpoint(j,1):endpoint(j,1),startpoint(j,2):endpoint(j,2)) + ...
-                    tree.nodes(indices(j)).stats.Ims{i}(Imsstart(1):Imsend(1),Imsstart(2):Imsend(2));
-                oub{i} =  oub{i} + sum(sum(tree.nodes(indices(j)).stats.Ims{i})) - ...
-                    sum(sum( tree.nodes(indices(j)).stats.Ims{i}(Imsstart(1):Imsend(1),Imsstart(2):Imsend(2))));
-            end
+                    tree.nodes(indices(j)).stats.map{i}(Imsstart(1):Imsend(1),Imsstart(2):Imsend(2));
+                oub{i} =  oub{i} + sum(sum(tree.nodes(indices(j)).stats.map{i})) - ...
+                    sum(sum( tree.nodes(indices(j)).stats.map{i}(Imsstart(1):Imsend(1),Imsstart(2):Imsend(2))));
+%            end
         end
     end
     
@@ -94,8 +100,8 @@ function [H,oub,Hcenters] = houghImage(tree, indices, xVals, yVals, zeroCenters,
 end
 
 function s = getSize(x,i)
-    if(isfield(x.stats,'Ims'))
-        s = size(x.stats.Ims{i})';
+    if(isfield(x.stats,'map'))
+        s = size(x.stats.map{i})';
     else
         s = [0 0]';
     end

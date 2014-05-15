@@ -1,4 +1,4 @@
-function createTestTrain( outdir, data , ismasked, issmoothed, useCenter, useAngles, angleCount)
+function createTestTrain( outdir, data , ismasked, issmoothed, useCenter, useAngles, angleCount,add,  mgt, stdgt)
     if (~(useCenter||useAngles))
         disp('WARNING: no GT data is written')
     end
@@ -6,24 +6,35 @@ function createTestTrain( outdir, data , ismasked, issmoothed, useCenter, useAng
     if (~exist('angleCount','var'))
         angleCount = [1 2 3];
     end
-
-    mulCoeff = 1;
-
-    fid = fopen([outdir 'files.txt'],'w');
     
+    if (~exist('add','var'))
+        add = 0;
+    end
+    
+    dim = length(data{1}.gt);
+    
+    if(~exist('mgt','var'))
+        mgt = zeros(dim,1);
+        stdgt = ones(dim,1);
+    end
+
     %write header
+    if (~add)
+        fid = fopen([outdir 'files.txt'],'w');
+        if(useCenter)
+            fprintf(fid,',r,r');
+        end
+        if(useAngles)
+            fprintf(fid,repmat(',a',1,length(angleCount)));
+        end
+        fprintf(fid,'\n');
+    else
+        fid = fopen([outdir 'files.txt'],'a');
+    end
     
-    if(useCenter)
-        fprintf(fid,',r,r');
-    end
-    if(useAngles)
-        fprintf(fid,repmat(',a',1,length(angleCount)));
-    end
-    fprintf(fid,'\n');
-    %write data
-
     for i=1:length(data)
         I = readBinImg(data{i}.name);
+        data{i}.gt(3+angleCount) = (data{i}.gt(3+angleCount) - mgt(3+angleCount))./stdgt(3+angleCount);
         
         if(issmoothed)
             mask1 = imerode((I>0),strel('rectangle',[5 5]));
@@ -33,19 +44,21 @@ function createTestTrain( outdir, data , ismasked, issmoothed, useCenter, useAng
             I = If.*mask2 + (mask1-mask2).*I;
         end
         
+        outputfn = [outdir 'img' num2str(data{i}.person) '_' num2str(data{i}.number) '.png'];
+        
         if (ismasked)
-            mask = double(imread(data{i}.mask)')/255; %carefull mask max: 255
-            imwrite(uint16(I.*mask),[outdir 'img_' num2str(data{i}.number) '.png']);
+            mask = double(imread(data{i}.mask))/255; %carefull mask max: 255
+            imwrite(uint16(I.*mask),outputfn);
         else
-            imwrite(uint16(I),[outdir 'img_' num2str(data{i}.number) '.png']);
+            imwrite(uint16(I),outputfn);
         end
         
-        fprintf(fid,[outdir 'img_' num2str(data{i}.number) '.png']);
+        fprintf(fid,outputfn);
         if (useCenter)
-            fprintf(fid,',%03.2f,%03.2f',data{i}.C2D([2 1]));
+            fprintf(fid,',%03.2f,%03.2f,%03.2f',data{i}.gt(1:3));
         end
         if (useAngles)
-            fprintf(fid,',%03.2f,%03.2f,%03.2f',mulCoeff*data{i}.gt(3+angleCount));
+            fprintf(fid,repmat(',%03.2f',1,length(angleCount)),data{i}.gt(3+angleCount));
         end
         fprintf(fid,'\n');
     end

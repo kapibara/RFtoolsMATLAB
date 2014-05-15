@@ -3,13 +3,14 @@
 options.readFeature = @(fid) readFeature_DepthFeature(fid);
 options.visFeature = @(f) visualize_DepthFeature(f);
 %options.readStats = @(fid) readStats_ClassStats(fid);
-options.readStats = @(fid) readStats_VotesStats(fid);
-options.visStats = @(s) visualize_VotesStats(s);
-options.elemCount = @(s) count_VotesStats(s);
+options.readStats = @(fid) readStats_VotesStatsT(fid);
+options.visStats = @(s) visualize_VotesStatsT(s);
+options.elemCount = @(s) count_VotesStatsT(s);
+options.decisionLevel = 3;
 
-p = '/home/kuznetso/tmp/CubeExperiment/forests/';
+p = '/home/kuznetso/tmp/GroupTestD15wi10FullNorm/';
 
-fs = dir([p '0*']);
+fs = dir([p 'te*']);
 
 %don't make it a folder date value
 
@@ -26,13 +27,15 @@ nodeIndex = 0;
 
 for i=1:length(folders)
     
-    f = fopen([p folders{i} '/forest']);
+    fo1= dir([p folders{i} '/09*']);
+    
+    f = fopen([p folders{i} '/' fo1(1).name '/forest']);
     forests{i}.forest = readForest(f,options);
 %    ft = fopen([p folders{i} '/log.txt']);
 %    fname = fgetl(ft);
     
 %    data = readAccomulatedFeatures([p folders{i} '/accomulatedFeatures']);
-    ind = arrayfun(@(x)x.nodeIndex,data);
+%    ind = arrayfun(@(x)x.nodeIndex,data);
     
 %    accFeatures{i}.features = data(ind==nodeIndex).features;
     
