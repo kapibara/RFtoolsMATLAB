@@ -12,7 +12,7 @@ fpn = fread(fid,1,'int32');
 data = [];
 fecount=0;
 
-while(~feof(fid) && (maxfecount>0 && fecount < maxfecount))
+while(~feof(fid) && (maxfecount < 0 || fecount < maxfecount))
     nodeIndex = fread(fid,1,'uint32');
     fecount = fecount+1;
     if(~isempty(nodeIndex))

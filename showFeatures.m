@@ -23,4 +23,7 @@ function showFeatures(nodes, tstring)
     plot([allux zeros(length(allvx),1) allvx]',[alluy zeros(length(allvx),1) allvy]');
     legend(labels);
     title(tstring);
+    axis equal
+    xlim([-80 80])
+    ylim([-80 80])
 end
